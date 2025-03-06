@@ -1,0 +1,120 @@
+# k0rdent Helm values
+
+k0rdent:
+  # AWS configuration
+  aws:
+    region: "${AWS_REGION}"
+    accessKeyId: "${AWS_ACCESS_KEY_ID}"
+    secretAccessKey: "${AWS_SECRET_ACCESS_KEY}"
+    # Optional: Use IAM roles for service accounts
+    irsaEnabled: false
+    # Optional: Default VPC configuration
+    vpc:
+      cidr: "10.0.0.0/16"
+      publicSubnets:
+        - "10.0.1.0/24"
+        - "10.0.2.0/24"
+        - "10.0.3.0/24"
+      privateSubnets:
+        - "10.0.4.0/24"
+        - "10.0.5.0/24"
+        - "10.0.6.0/24"
+
+  # SSH configuration
+  ssh:
+    privateKeyPath: "/etc/k0rdent/ssh/id_rsa"
+    # Optional: Username for SSH access
+    username: "ubuntu"
+    # Optional: Port for SSH access
+    port: 22
+
+  # GitOps configuration
+  gitops:
+    repoUrl: "https://github.com/mgueye01/k0rdent-ops/cluster-templates.git"
+    branch: "main"
+    path: "clusters"
+    # Optional: Authentication
+    auth:
+      type: "ssh"
+      sshPrivateKeyPath: "/etc/k0rdent/git/id_rsa"
+
+  # Metrics configuration
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+  # Log level
+  logLevel: "info"  # debug, info, warn, error
+
+  # Resources
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  # Node selector
+  nodeSelector: {}
+
+  # Tolerations
+  tolerations: []
+
+  # Affinity
+  affinity: {}
+
+  # Image configuration
+  image:
+    repository: "k0rdent/k0rdent"
+    tag: "latest"
+    pullPolicy: "Always"
+
+  # Service account
+  serviceAccount:
+    create: true
+    annotations: {}
+
+  # Pod security context
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+
+  # Container security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    capabilities:
+      drop:
+        - ALL
+
+  # Webhook configuration
+  webhook:
+    enabled: true
+    port: 9443
+    certManager:
+      enabled: true
+
+  # Leader election
+  leaderElection:
+    enabled: true
+    resourceName: "k0rdent-leader-election"
+
+  # Cluster defaults
+  clusterDefaults:
+    k0s:
+      version: "1.28.3+k0s.0"
+    nodes:
+      controllers:
+        instanceType: "t3.medium"
+      workers:
+        instanceType: "t3.large"
+    addons:
+      ingress:
+        enabled: true
+      metricsServer:
+        enabled: true
