@@ -1,0 +1,34 @@
+apiVersion: k0rdent.io/v1alpha1
+kind: Cluster
+metadata:
+  name: CLUSTER_NAME
+  labels:
+    environment: ENVIRONMENT
+    team: TEAM
+spec:
+  region: REGION
+  
+  networking:
+    vpcCidr: "10.0.0.0/16"
+    publicIp: true
+  
+  nodes:
+    controllers:
+      count: CONTROLLER_COUNT
+      instanceType: CONTROLLER_INSTANCE_TYPE
+    
+    workers:
+      count: WORKER_COUNT
+      instanceType: WORKER_INSTANCE_TYPE
+  
+  k0s:
+    version: "1.28.3+k0s.0"
+  
+  ssh:
+    keyName: k0rdent
+  
+  addons:
+    ingress:
+      enabled: true
+    metricsServer:
+      enabled: true
